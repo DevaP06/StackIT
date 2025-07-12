@@ -1,6 +1,7 @@
-# Node.js
-node_modules/
-.env
+# Ignore backend modules
+server/node_modules/
+# Ignore environment config
+server/.env
+# OS junk
 .DS_Store
-npm-debug.log
-
+Thumbs.db
