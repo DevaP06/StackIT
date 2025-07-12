@@ -1,25 +1,20 @@
-/* ✅ Google Font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import "tailwindcss";
 
-/* ✅ Tailwind and DaisyUI */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-/* ❌ Do NOT use @plugin here — it goes in tailwind.config.js */
-/* ✅ Global custom styles */
-* {
-  font-family: 'Inter', sans-serif;
-  /* background-color: #060606; Uncomment if needed */
+@plugin "daisyui" {
+    themes: black;
 }
 
-/* ✅ Utility classes */
-.logo {
-  height: 75px;
-  width: 75px;
+*{
+    font-family: "Inter";
+  /* background-color: #060606; */
 }
 
-/* ✅ Floating animation */
+.logo{
+    height: 75px;
+    width: 75px;
+}
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -30,12 +25,10 @@
   animation: float 3s ease-in-out infinite;
 }
 
-/* ✅ Transparent background override */
-.fo-trans {
+.fo-trans{
   background-color: transparent;
 }
 
-/* ✅ Smooth scroll */
 html {
   scroll-behavior: smooth;
 }

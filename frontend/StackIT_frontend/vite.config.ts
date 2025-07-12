@@ -1,16 +1,11 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
+import tailwindcss from "@tailwindcss/vite"
 
-// https://vitejs.dev/config/
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  server: {
-    port: 5173,
-    open: true,
-    // 👇 This line fixes 404 when using React Router on refresh or direct URL access
-    historyApiFallback: true,
-    proxy: {
-      '/api': 'http://localhost:5000'
-    }
-  },
-});
+  plugins: [react(),tailwindcss()],
+
+})
