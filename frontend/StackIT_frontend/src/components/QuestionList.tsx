@@ -12,6 +12,15 @@ const QuestionList: React.FC<QuestionListProps> = ({ filter, searchQuery }) => {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
+  const handleVote = (questionId: string, voteType: 'up' | 'down') => {
+    setQuestions(questions.map(q => {
+      if (q._id === questionId) {
+        return { ...q, votes: q.votes + (voteType === 'up' ? 1 : -1) };
+      }
+      return q;
+    }));
+  };
+
   React.useEffect(() => {
     const fetchQuestions = async () => {
       setLoading(true);
@@ -42,7 +51,7 @@ const QuestionList: React.FC<QuestionListProps> = ({ filter, searchQuery }) => {
   return (
     <div>
       {questions.map((question) => (
-        <QuestionCard key={question._id} question={question} />
+        <QuestionCard key={question._id} question={question} onVote={handleVote} />
       ))}
     </div>
   );

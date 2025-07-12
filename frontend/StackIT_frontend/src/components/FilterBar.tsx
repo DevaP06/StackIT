@@ -11,10 +11,11 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
     <div className="mb-4">
       <select
         onChange={handleChange}
+        defaultValue="suggested"
         className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
+        <option value="suggested">Top by Votes</option>
         <option value="newest">Newest</option>
-        <option value="suggested">Suggested</option>
       </select>
     </div>
   );

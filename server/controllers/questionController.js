@@ -16,29 +16,80 @@ exports.getQuestions = async (req, res) => {
       query.$text = { $search: search };
     }
 
-    // Sorting based on filter
-    let sortOptions = {};
-    if (filter === 'newest') {
-      sortOptions = { createdAt: -1 };
-    } else if (filter === 'suggested') {
-      sortOptions = { voteCount: -1, createdAt: -1 };
+    let questions;
+    
+    if (filter === 'suggested') {
+      // Use aggregation pipeline for better vote-based sorting
+      questions = await Question.aggregate([
+        { $match: query },
+        {
+          $addFields: {
+            voteCount: {
+              $subtract: [
+                { $size: { $ifNull: ['$votes.upvotes', []] } },
+                { $size: { $ifNull: ['$votes.downvotes', []] } }
+              ]
+            }
+          }
+        },
+        { $sort: { voteCount: -1, createdAt: -1 } },
+        { $skip: skip },
+        { $limit: limit },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'author',
+            foreignField: '_id',
+            as: 'author'
+          }
+        },
+        { $unwind: '$author' },
+        {
+          $project: {
+            _id: 1,
+            title: 1,
+            description: 1,
+            tags: 1,
+            votes: 1,
+            views: 1,
+            isAnswered: 1,
+            acceptedAnswer: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            voteCount: 1,
+            'author._id': 1,
+            'author.username': 1
+          }
+        }
+      ]);
+    } else {
+      // Use regular find for other filters
+      const sortOptions = filter === 'newest' ? { createdAt: -1 } : { createdAt: -1 };
+      questions = await Question.find(query)
+        .populate('author', 'username')
+        .sort(sortOptions)
+        .skip(skip)
+        .limit(limit)
+        .lean();
     }
-
-    const questions = await Question.find(query)
-      .populate('author', 'username')
-      .sort(sortOptions)
-      .skip(skip)
-      .limit(limit)
-      .lean();
 
     // Add vote count to each question
     const questionsWithVotes = questions.map(q => {
-      const upvotes = q.votes && Array.isArray(q.votes.upvotes) ? q.votes.upvotes.length : 0;
-      const downvotes = q.votes && Array.isArray(q.votes.downvotes) ? q.votes.downvotes.length : 0;
-      return {
-        ...q,
-        votes: upvotes - downvotes
-      };
+      if (filter === 'suggested' && q.voteCount !== undefined) {
+        // For suggested filter, use the calculated voteCount from aggregation
+        return {
+          ...q,
+          votes: q.voteCount
+        };
+      } else {
+        // For other filters, calculate vote count manually
+        const upvotes = q.votes && Array.isArray(q.votes.upvotes) ? q.votes.upvotes.length : 0;
+        const downvotes = q.votes && Array.isArray(q.votes.downvotes) ? q.votes.downvotes.length : 0;
+        return {
+          ...q,
+          votes: upvotes - downvotes
+        };
+      }
     });
 
     const total = await Question.countDocuments(query);
@@ -188,6 +239,8 @@ exports.voteQuestion = async (req, res) => {
     const questionId = req.params.id;
     const userId = req.user.id;
 
+    console.log('Voting on question:', { questionId, voteType, userId });
+
     if (!['up', 'down'].includes(voteType)) {
       return res.status(400).json({ success: false, message: 'Invalid vote type' });
     }
@@ -213,6 +266,7 @@ exports.voteQuestion = async (req, res) => {
     }
 
     await question.save();
+    console.log('Question vote saved successfully');
 
     const updatedQuestion = await Question.findById(questionId)
       .populate('author', 'username')
@@ -220,6 +274,7 @@ exports.voteQuestion = async (req, res) => {
 
     updatedQuestion.votes = updatedQuestion.votes.upvotes.length - updatedQuestion.votes.downvotes.length;
 
+    console.log('Updated question votes:', updatedQuestion.votes);
     res.json({ success: true, data: updatedQuestion });
   } catch (error) {
     console.error('Error voting on question:', error);

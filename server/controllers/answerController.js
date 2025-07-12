@@ -143,6 +143,8 @@ exports.voteAnswer = async (req, res) => {
     const answerId = req.params.id;
     const userId = req.user.id;
 
+    console.log('Voting on answer:', { answerId, voteType, userId });
+
     if (!['up', 'down'].includes(voteType)) {
       return res.status(400).json({ success: false, message: 'Invalid vote type' });
     }
@@ -168,6 +170,7 @@ exports.voteAnswer = async (req, res) => {
     }
 
     await answer.save();
+    console.log('Answer vote saved successfully');
 
     const updatedAnswer = await Answer.findById(answerId)
       .populate('author', 'username')
@@ -175,6 +178,7 @@ exports.voteAnswer = async (req, res) => {
 
     updatedAnswer.votes = updatedAnswer.votes.upvotes.length - updatedAnswer.votes.downvotes.length;
 
+    console.log('Updated answer votes:', updatedAnswer.votes);
     res.json({ success: true, data: updatedAnswer });
   } catch (error) {
     console.error('Error voting on answer:', error);

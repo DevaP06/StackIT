@@ -20,6 +20,7 @@ interface Answer {
   authorId: string;
   timestamp: number;
   isAccepted: boolean;
+  votes?: number;
 }
 
 interface User {
@@ -55,6 +56,7 @@ const AnswerPage: React.FC = () => {
         authorId: 'user789',
         timestamp: Date.now(),
         isAccepted: true,
+        votes: 5,
       },
       {
         id: 2,
@@ -63,6 +65,7 @@ const AnswerPage: React.FC = () => {
         authorId: 'user456',
         timestamp: Date.now(),
         isAccepted: false,
+        votes: 2,
       },
     ]);
   }, [questionId]);
@@ -90,6 +93,31 @@ const AnswerPage: React.FC = () => {
       setAnswers(answers.map(ans =>
       ans.id === answerId ? { ...ans, isAccepted: true } : { ...ans, isAccepted: false }
       ));
+  };
+
+  const handleVote = async (answerId: number, voteType: 'up' | 'down') => {
+    if (!user) {
+      alert('Please login to vote');
+      return;
+    }
+
+    try {
+      // Update local state immediately for better UX
+      setAnswers(answers.map(ans => {
+        if (ans.id === answerId) {
+          // Simple vote logic - in a real app you'd track user's previous votes
+          return { ...ans, votes: (ans.votes || 0) + (voteType === 'up' ? 1 : -1) };
+        }
+        return ans;
+      }));
+
+      // Call API to persist the vote
+      await answersAPI.vote(answerId.toString(), voteType);
+    } catch (error) {
+      console.error('Error voting:', error);
+      // Revert the local state change on error
+      // In a real app, you'd fetch the current state from server
+    }
   };
 
   return (
@@ -132,15 +160,17 @@ const AnswerPage: React.FC = () => {
                 <div className="flex gap-2">
                   <button
                     className="text-gray-300 hover:text-blue-400"
+                    onClick={() => handleVote(ans.id, 'up')}
                     aria-label="Upvote answer"
                   >
-                    Upvote
+                    Upvote {ans.votes && ans.votes > 0 && `(${ans.votes})`}
                   </button>
                   <button
                     className="text-gray-300 hover:text-red-400"
+                    onClick={() => handleVote(ans.id, 'down')}
                     aria-label="Downvote answer"
                   >
-                    Downvote
+                    Downvote {ans.votes && ans.votes < 0 && `(${Math.abs(ans.votes)})`}
                   </button>
                   {user?.id === question?.authorId && !ans.isAccepted && (
                     <button

@@ -6,7 +6,7 @@ import SearchBar from '../components/SearchBar';
 import QuestionList from '../components/QuestionList';
 
 const HomePage: React.FC = () => {
-  const [filter, setFilter] = React.useState<'newest' | 'suggested'>('newest');
+  const [filter, setFilter] = React.useState<'newest' | 'suggested'>('suggested');
   const [searchQuery, setSearchQuery] = React.useState('');
 
   return (
@@ -14,7 +14,7 @@ const HomePage: React.FC = () => {
       <ScrollTracker />
       {/* <Navbar /> */}
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Top Questions</h1>
+        <h1 className="text-2xl font-bold mb-4">Top Questions by Votes</h1>
         <FilterBar onFilterChange={setFilter} />
         <SearchBar onSearch={setSearchQuery} />
         <QuestionList filter={filter} searchQuery={searchQuery} />
