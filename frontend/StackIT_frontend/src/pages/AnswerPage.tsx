@@ -16,7 +16,7 @@ const AnswerPage: React.FC = () => {
       setLoading(true);
       try {
         const response = await questionsAPI.getById(id!);
-        setQuestion(response.data);
+        setQuestion(response.data.data);
       } catch (error) {
         setQuestion(null);
       } finally {
