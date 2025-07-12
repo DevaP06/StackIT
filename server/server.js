@@ -16,6 +16,18 @@ app.use(express.json()); // To parse JSON requests
 const messageRoutes = require('./routes/messageRoutes');
 // You can add more routes like authRoutes, questionRoutes here
 app.use('/api/messages', messageRoutes);
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'StackIT API is running successfully!', 
+    status: 'success',
+    version: '1.0.0',
+    endpoints: {
+      messages: '/api/messages',
+      // Add other endpoints as you build them
+    }
+  });
+});
+
 
 // Connect to MongoDB and start server
 mongoose.connect(process.env.MONGO_URI)
