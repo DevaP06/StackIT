@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SubmitQuestion from '../components/SubmitQuestion';
 import { questionsAPI } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 
 const AskQuestion = () => {
@@ -10,11 +11,18 @@ const AskQuestion = () => {
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isAuthenticated) {
+      toast.error('Please login to create a question');
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -24,12 +32,16 @@ const AskQuestion = () => {
         tags,
       };
 
+      console.log('Creating question:', newQuestion);
       const response = await questionsAPI.create(newQuestion);
+      console.log('Question created:', response);
+      
       toast.success('Question created successfully!');
       navigate(`/question/${response.data._id}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating question:', error);
-      toast.error('Failed to create question. Please try again.');
+      const message = error.response?.data?.message || error.message || 'Failed to create question. Please try again.';
+      toast.error(message);
     } finally {
       setLoading(false);
     }

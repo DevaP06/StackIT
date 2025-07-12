@@ -89,6 +89,14 @@ exports.createQuestion = async (req, res) => {
   try {
     const { title, description, tags } = req.body;
 
+    console.log('Creating question with data:', { title, description, tags });
+    console.log('User ID:', req.user?.id);
+
+    if (!req.user || !req.user.id) {
+      console.error('No authenticated user found');
+      return res.status(401).json({ success: false, message: 'Authentication required' });
+    }
+
     if (!title || !description) {
       console.error('Missing title or description');
       return res.status(400).json({ success: false, message: 'Title and description are required' });
@@ -103,12 +111,13 @@ exports.createQuestion = async (req, res) => {
     });
 
     await question.save();
-    console.log('Question created:', question._id);
+    console.log('Question created successfully:', question._id);
 
     const populatedQuestion = await Question.findById(question._id)
       .populate('author', 'username')
       .lean();
 
+    console.log('Question saved to MongoDB:', populatedQuestion);
     res.status(201).json({ success: true, data: populatedQuestion });
   } catch (error) {
     console.error('Error creating question:', error);

@@ -35,7 +35,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (token) {
         try {
           const response = await authAPI.getCurrentUser();
-          setUser(response.data);
+          const userData = response.user || response.data?.user;
+          if (userData) {
+            setUser(userData);
+          } else {
+            throw new Error('Invalid user data');
+          }
         } catch (error) {
           console.error('Failed to get current user:', error);
           setAuthToken(null);
@@ -50,14 +55,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     try {
       const response = await authAPI.login({ email, password });
-      const { token, user: userData } = response.data;
+      // Handle both direct and nested data structures
+      const token = response.token || response.data?.token;
+      const userData = response.user || response.data?.user;
       
-      setAuthToken(token);
-      setUser(userData);
-      toast.success('Logged in successfully!');
+      if (token && userData) {
+        setAuthToken(token);
+        setUser(userData);
+        toast.success('Logged in successfully!');
+      } else {
+        throw new Error('Invalid response from server');
+      }
     } catch (error: any) {
       console.error('Login error:', error);
-      const message = error.response?.data?.message || 'Login failed. Please try again.';
+      const message = error.response?.data?.error || error.message || 'Login failed. Please try again.';
       toast.error(message);
       throw error;
     }

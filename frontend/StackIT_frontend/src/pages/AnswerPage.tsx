@@ -83,13 +83,13 @@ const AnswerPage: React.FC = () => {
       isAccepted: false,
     };
     setAnswers([newAns, ...answers]);
-    setNewAnswer('');
+      setNewAnswer('');
   };
 
   const handleAcceptAnswer = (answerId: number) => {
-    setAnswers(answers.map(ans =>
+      setAnswers(answers.map(ans =>
       ans.id === answerId ? { ...ans, isAccepted: true } : { ...ans, isAccepted: false }
-    ));
+      ));
   };
 
   return (
@@ -104,15 +104,15 @@ const AnswerPage: React.FC = () => {
 
         {/* Question Section */}
         {question && (
-          <div className="bg-gray-900 p-6 rounded-lg shadow mb-6">
-            <h1 className="text-2xl font-bold text-white mb-2">{question.title}</h1>
-            <div className="prose prose-invert max-w-none mb-3" dangerouslySetInnerHTML={{ __html: question.description }} />
-            <div className="flex flex-wrap gap-2 mb-2">
-              {question.tags.map((tag, idx) => (
-                <span key={idx} className="bg-gray-700 px-3 py-1 rounded-full text-sm text-gray-200">{tag}</span>
-              ))}
-            </div>
-            <div className="text-sm text-gray-400">
+        <div className="bg-gray-900 p-6 rounded-lg shadow mb-6">
+          <h1 className="text-2xl font-bold text-white mb-2">{question.title}</h1>
+          <div className="prose prose-invert max-w-none mb-3" dangerouslySetInnerHTML={{ __html: question.description }} />
+          <div className="flex flex-wrap gap-2 mb-2">
+            {question.tags.map((tag, idx) => (
+              <span key={idx} className="bg-gray-700 px-3 py-1 rounded-full text-sm text-gray-200">{tag}</span>
+            ))}
+          </div>
+          <div className="text-sm text-gray-400">
               Asked by {question.author} • {new Date(question.timestamp).toLocaleDateString()}
             </div>
           </div>
