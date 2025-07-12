@@ -1,6 +1,7 @@
 // src/pages/AskQuestion.tsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SubmitQuestion from '../components/SubmitQuestion';
 
 const AskQuestion = () => {
   const [title, setTitle] = useState('');
@@ -27,37 +28,7 @@ const AskQuestion = () => {
 
   return (
     <div className="max-w-3xl mx-auto mt-10 px-4">
-      <h2 className="text-2xl font-bold mb-4">Ask a New Question</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <input
-          type="text"
-          placeholder="Enter question title"
-          className="w-full border p-2 rounded"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-
-        <textarea
-          placeholder="Enter question description (you can format it in markdown)"
-          className="w-full border p-2 rounded h-40"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        />
-
-        <input
-          type="text"
-          placeholder="Tags (comma separated)"
-          className="w-full border p-2 rounded"
-          value={tags.join(',')}
-          onChange={(e) => setTags(e.target.value.split(',').map(tag => tag.trim()))}
-        />
-
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-          Submit Question
-        </button>
-      </form>
+    <SubmitQuestion></SubmitQuestion>
     </div>
   );
 };
