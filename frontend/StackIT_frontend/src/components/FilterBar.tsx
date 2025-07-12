@@ -3,14 +3,19 @@ interface FilterBarProps {
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onFilterChange(e.target.value as 'newest' | 'suggested');
+  };
+
   return (
-    <div className="mb-4 flex space-x-4">
-      <button onClick={() => onFilterChange('newest')} className="text-blue-500 hover:underline">
-        Newest
-      </button>
-      <button onClick={() => onFilterChange('suggested')} className="text-blue-500 hover:underline">
-        Suggested
-      </button>
+    <div className="mb-4">
+      <select
+        onChange={handleChange}
+        className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+        <option value="newest">Newest</option>
+        <option value="suggested">Suggested</option>
+      </select>
     </div>
   );
 };
