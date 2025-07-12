@@ -11,6 +11,9 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json()); // To parse JSON requests
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
+
 
 // Routes
 const messageRoutes = require('./routes/messageRoutes');
@@ -43,3 +46,4 @@ mongoose.connect(process.env.MONGO_URI)
     console.error('❌ MongoDB connection failed:', err.message);
     process.exit(1); // Exit if DB connection fails
   });
+

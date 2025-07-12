@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../assets/StackIt_logo.png'; // Or replace with any logo or text
+import logo from 'D:/stackIT/frontend/StackIT_frontend/src/components/icons and svgs/01_forza7_porsche_gt2rs_02_4k_v2_noflag.jpg'; // Or replace with any logo or text
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
