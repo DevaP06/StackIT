@@ -9,5 +9,8 @@ export default defineConfig({
     open: true,
     // 👇 This line fixes 404 when using React Router on refresh or direct URL access
     historyApiFallback: true,
+    proxy: {
+      '/api': 'http://localhost:5000'
+    }
   },
 });
