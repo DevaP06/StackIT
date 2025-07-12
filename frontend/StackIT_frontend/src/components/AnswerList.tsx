@@ -1,40 +1,68 @@
-import React from "react";
-import AnswerCard from "./AnswerCard";
-import { answersAPI, Answer } from '../services/api';
+// components/AnswerList.tsx
+import React, { useEffect, useState } from 'react';
+
+interface Answer {
+  id: number;
+  content: string;
+  author: string;
+  date: string;
+}
 
 interface AnswerListProps {
-  questionId: string;
+  questionId: number;
 }
 
 const AnswerList: React.FC<AnswerListProps> = ({ questionId }) => {
-  const [answers, setAnswers] = React.useState<Answer[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const fetchAnswers = async () => {
-    setLoading(true);
-    try {
-      const response = await answersAPI.getByQuestionId(questionId);
-      setAnswers(response.data.data || []);
-    } catch (error) {
-      setAnswers([]);
-    } finally {
+  useEffect(() => {
+    // Mock fetch — replace with actual API call
+    const fetchAnswers = async () => {
+      setLoading(true);
+      await new Promise((res) => setTimeout(res, 1000)); // simulate delay
+
+      setAnswers([
+        {
+          id: 1,
+          content: 'You can use a binary search algorithm if the array is sorted.',
+          author: 'Alice',
+          date: '2025-07-10',
+        },
+        {
+          id: 2,
+          content: 'Linear search is simpler but slower on large data sets.',
+          author: 'Bob',
+          date: '2025-07-11',
+        },
+      ]);
+
       setLoading(false);
-    }
-  };
+    };
 
-  React.useEffect(() => {
     fetchAnswers();
-    // eslint-disable-next-line
   }, [questionId]);
 
-  if (loading) return <div className="text-center py-4">Loading...</div>;
+  if (loading) {
+    return <p className="text-center text-gray-500">Loading answers...</p>;
+  }
+
+  if (answers.length === 0) {
+    return <p className="text-center text-gray-500">No answers yet. Be the first one!</p>;
+  }
 
   return (
-    <div className="mb-6">
-      <h2 className="text-xl font-bold mb-4">Answers</h2>
-      {answers.length === 0 && <div className="text-gray-400">No answers yet.</div>}
+    <div className="space-y-4">
       {answers.map((answer) => (
-        <AnswerCard key={answer._id} answer={answer} />
+        <div
+          key={answer.id}
+          className="bg-white rounded-lg shadow-md p-5 hover:shadow-lg transition"
+        >
+          <p className="text-gray-800 text-lg">{answer.content}</p>
+          <div className="mt-2 text-sm text-gray-500">
+            — {answer.author} on {new Date(answer.date).toLocaleDateString()}
+          </div>
+        </div>
       ))}
     </div>
   );

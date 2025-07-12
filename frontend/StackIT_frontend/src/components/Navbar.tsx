@@ -31,7 +31,7 @@ const Navbar = () => {
       <div className="flex items-center space-x-8">
         <Link to="/" className="flex items-center">
           <img src={logo} alt="StackIt" className="h-8 mr-2" />
-          <span className="text-lg font-bold text-white">Code Exchange</span>
+          <span className="text-lg font-bold text-white">Stackit</span>
         </Link>
         <div className="hidden md:flex space-x-6">
           <Link to="/" className="text-white hover:text-blue-400">Home</Link>

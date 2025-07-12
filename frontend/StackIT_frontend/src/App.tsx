@@ -12,7 +12,7 @@ import HomePage from './pages/HomePage';
 import NotFound from './pages/NotFound';
 import AskQuestion from './pages/AskQuestion';
 import AnswerPage from './pages/AnswerPage';
-import AnswersPage from './pages/AnswerPage'; // New import
+
 
 const App = () => {
   const router = createBrowserRouter(
@@ -21,6 +21,7 @@ const App = () => {
         <Route index element={<HomePage />} />
         <Route path="ask" element={<AskQuestion />} />
         <Route path="question/:id" element={<AnswerPage />} />
+        <Route path="answers" element={<AnswerPage />} /> {/* ✅ Added route */}
         <Route path="*" element={<NotFound />} />
       </Route>
     )
@@ -37,3 +38,4 @@ const App = () => {
 };
 
 export default App;
+
