@@ -4,6 +4,8 @@ import {
   createRoutesFromElements,
   Route,
 } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from './contexts/AuthContext';
 
 import MainLayout from './pages/MainLayout';
 import HomePage from './pages/HomePage';
@@ -19,16 +21,18 @@ const App = () => {
         <Route index element={<HomePage />} />
         <Route path="ask" element={<AskQuestion />} />
         <Route path="question/:id" element={<AnswerPage />} />
-        <Route path="answers" element={<AnswersPage />} /> {/* New route */}
         <Route path="*" element={<NotFound />} />
       </Route>
     )
   );
 
   return (
-    <div className="min-h-screen scroll-smooth">
-      <RouterProvider router={router} />
-    </div>
+    <AuthProvider>
+      <div className="min-h-screen scroll-smooth">
+        <RouterProvider router={router} />
+        <Toaster position="top-right" />
+      </div>
+    </AuthProvider>
   );
 };
 

@@ -1,9 +1,11 @@
 import React from "react";
+import { answersAPI } from '../services/api';
 interface AnswerFormProps {
-  questionId: number;
+  questionId: string;
+  onAnswerSubmitted?: () => void;
 }
 
-const AnswerForm: React.FC<AnswerFormProps> = ({ questionId }) => {
+const AnswerForm: React.FC<AnswerFormProps> = ({ questionId, onAnswerSubmitted }) => {
   const [content, setContent] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
@@ -11,13 +13,9 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ questionId }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Replace with actual backend API call: await fetch(`/api/questions/${questionId}/answers`, {
-      //   method: 'POST',
-      //   body: JSON.stringify({ content }),
-      //   headers: { 'Content-Type': 'application/json' },
-      // })
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      await answersAPI.create(questionId, content);
       setContent(''); // Clear form on success
+      if (onAnswerSubmitted) onAnswerSubmitted();
     } catch (error) {
       console.error("Failed to submit answer:", error);
     } finally {

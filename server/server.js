@@ -12,12 +12,14 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // To parse JSON requests
 const authRoutes = require('./routes/authRoutes');
-app.use('/api/auth', authRoutes);
-
+const questionRoutes = require('./routes/questionRoutes');
+const answerRoutes = require('./routes/answerRoutes');
+const messageRoutes = require('./routes/messageRoutes');
 
 // Routes
-const messageRoutes = require('./routes/messageRoutes');
-// You can add more routes like authRoutes, questionRoutes here
+app.use('/api/auth', authRoutes);
+app.use('/api/questions', questionRoutes);
+app.use('/api/answers', answerRoutes);
 app.use('/api/messages', messageRoutes);
 app.get('/', (req, res) => {
   res.json({ 

@@ -2,33 +2,51 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SubmitQuestion from '../components/SubmitQuestion';
+import { questionsAPI } from '../services/api';
+import toast from 'react-hot-toast';
 
 const AskQuestion = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    const newQuestion = {
-      title,
-      description,
-      tags,
-    };
+    try {
+      const newQuestion = {
+        title,
+        description,
+        tags,
+      };
 
-    // TODO: Replace with API call
-    console.log('Submitting question:', newQuestion);
-
-    // Redirect to home or newly created question
-    navigate('/');
+      const response = await questionsAPI.create(newQuestion);
+      toast.success('Question created successfully!');
+      navigate(`/question/${response.data._id}`);
+    } catch (error) {
+      console.error('Error creating question:', error);
+      toast.error('Failed to create question. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="max-w-3xl mx-auto mt-10 px-4">
-    <SubmitQuestion></SubmitQuestion>
+      <SubmitQuestion
+        title={title}
+        description={description}
+        tags={tags.join(', ')}
+        loading={loading}
+        onTitleChange={e => setTitle(e.target.value)}
+        onDescriptionChange={e => setDescription(e.target.value)}
+        onTagsChange={e => setTags(e.target.value.split(',').map(tag => tag.trim()).filter(Boolean))}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 };

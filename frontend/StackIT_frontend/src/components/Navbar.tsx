@@ -1,15 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import AuthModal from './AuthModal';
 import logo from '../assets/StackIT_logo.png'; // Replace with your actual logo
 import profilePic from '../assets/profile.png'; // Placeholder profile image
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  const isLoggedIn = true;
+  const { user, logout, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -46,7 +50,7 @@ const Navbar = () => {
 
         <button className="text-white hover:text-blue-400 text-xl">🔔</button>
 
-        {isLoggedIn ? (
+        {isAuthenticated ? (
           <div className="relative" ref={dropdownRef}>
             <img
               src={profilePic}
@@ -56,12 +60,15 @@ const Navbar = () => {
             />
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-black border border-gray-700 rounded-md shadow-lg z-50">
+                <div className="px-4 py-2 text-sm text-gray-400 border-b border-gray-700">
+                  {user?.username}
+                </div>
                 <Link to="/profile" className="block px-4 py-2 text-sm text-white hover:bg-gray-800">My Profile</Link>
                 <Link to="/settings" className="block px-4 py-2 text-sm text-white hover:bg-gray-800">Settings</Link>
                 <button
                   onClick={() => {
                     setDropdownOpen(false);
-                    navigate("/login"); // Replace with logout logic
+                    logout();
                   }}
                   className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-800"
                 >
@@ -71,14 +78,34 @@ const Navbar = () => {
             )}
           </div>
         ) : (
-          <button
-            onClick={() => navigate("/login")}
-            className="border border-white px-3 py-1 rounded text-sm text-white hover:bg-gray-800"
-          >
-            Login
-          </button>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => {
+                setAuthMode('login');
+                setAuthModalOpen(true);
+              }}
+              className="border border-white px-3 py-1 rounded text-sm text-white hover:bg-gray-800"
+            >
+              Login
+            </button>
+            <button
+              onClick={() => {
+                setAuthMode('register');
+                setAuthModalOpen(true);
+              }}
+              className="bg-blue-600 px-3 py-1 rounded text-sm text-white hover:bg-blue-700"
+            >
+              Register
+            </button>
+          </div>
         )}
       </div>
+      
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        mode={authMode}
+      />
     </nav>
   );
 };
