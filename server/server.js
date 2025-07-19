@@ -9,7 +9,16 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173', // Development
+    'https://stackit-frontend.vercel.app', // Production frontend (update this with your actual domain)
+    'https://stackit.vercel.app', // Alternative production domain
+    'https://8k9k469t-5173.inc1.devtunnels.ms', // DevTunnel frontend
+    process.env.FRONTEND_URL // Environment variable for frontend URL
+  ].filter(Boolean),
+  credentials: true
+}));
 app.use(express.json()); // To parse JSON requests
 const authRoutes = require('./routes/authRoutes');
 const questionRoutes = require('./routes/questionRoutes');
